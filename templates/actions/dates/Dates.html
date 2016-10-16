@@ -1,0 +1,35 @@
+<div class="sidebar left300px bordered-left" id="s-orders">
+	<ul class="zebra" id="date-list">
+		<li>
+			<b>Дата доставки</b>
+			<span>согласовано/всего</span>
+		</li>
+		{foreach $date_list as $date=>$v}
+		<li{if $v.f} class="f"{/if}{if $v.w} class="w"{/if}>
+			<a href="#" data-date="{$v.date}">
+				<b>{$date}</b>
+				<span>заказы {$v.y}/{$v.total}</span>
+			</a>
+		</li>
+		{/foreach}
+	</ul>
+</div>
+<div class="content" id="s-order"></div>
+
+<style type="text/css">
+#date-list li {
+border-left: green solid 5px;
+}
+#date-list li:first-child {
+border-left-color: black;
+}
+#date-list li.f {
+border-left-color: red;
+}
+#date-list li.w {
+border-left-color: orange;
+}
+#date-list li span {
+float:right;
+}
+</style>

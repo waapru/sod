@@ -1,0 +1,139 @@
+{if empty($orders)}
+	<div class="block double-padded align-center blank">
+			<br><br><br><br>
+			<span class="gray large">[`There are no orders in this view.`]</span>
+			<div class="clear-left"></div>
+		</div>
+	</div>
+{else}
+
+<div class="{if $view != 'table'}sidebar left300px bordered-left{/if}" id="s-orders">
+	<div class="">
+		<ul class="zebra s-orders" id="order-list">
+		</ul>
+		{capture name="template-order-list-split"}
+			{literal}
+			{% var orders = o.orders; %}
+			{% for (var i = 0, n = orders.length; i < n; i += 1) { %}
+				{% var order = orders[i]; %}
+				<li class="order s-order-status-pending" data-order-id="{%#order.id%}">
+					<a href="#/orders/{/literal}{if $params_str}{$params_str}&{/if}{literal}id={%#order.id%}/">
+						{% if (!$.isEmptyObject(order.contact)) { %}
+							<div class="profile image50px">
+								<div class="image">
+									<img src="{%#order.contact.photo_50x50%}" style="max-height:50px;max-width:50px;">
+								</div>
+								<div class="details nowrap">
+									<span class="float-right small" style="{%#order.style%}">{%#order.total_str%}</span>
+									<i class="{%#order.icon%}"></i><span {% if (order.state_id == 'new') { %}class="highlighted"{% } %} style="{%#order.style%}">{%#order.id_str%}</span>
+									<p>
+										<span class="small black">{%#order.contact.name%}</span>
+										{% if (order.ok != 0) { %}
+										<span class="sod-ok">согласовано</span>
+										{% } %}
+										<br>
+										<span class="small black">Доставка:</span>
+										<span class="delivery-date" data-date="{%#order.date%}">{%#order.formated_date%}
+										{% if (order.start_hour != 0) { %}
+											с {%#order.start_hour%}
+										{% } %}
+										{% if (order.end_hour != 0) { %}
+											до {%#order.end_hour%}
+										{% } %}
+										</span>
+									</p>
+								</div>
+							</div>
+						{% } %}
+					</a>
+				</li>
+			{% } %}
+			{/literal}
+		{/capture}
+		<div class="lazyloading-wrapper">
+			<div class="lazyloading-progress-string">{_w('%d order','%d orders', $count)}&nbsp;{sprintf(_w('of %d'), $total_count)}</div><br>
+			 <a href="javascript:void(0);" class="lazyloading-link" {if $count >= $total_count}style="display:none;"{/if}>[`Show more orders`]</a>
+			<span class="lazyloading-progress" style="display:none">
+				<i class="icon16 loading"></i> [`Loading`] <span class="lazyloading-chunk">{_w('%d order', '%d orders', min($total_count - $count, $count))}...</span>
+			</span>
+		</div>
+		<div class="clear-left"></div>
+	</div>
+</div>
+<div class="content {if $view != 'table'}left300px{/if}" id="s-order" {if $view == 'table'}style="display:none;"{/if}></div>
+
+{* js templates block*}
+
+{foreach $smarty.capture as $template => $template_content}
+	{if $template_content && (strpos($template, 'template-')===0)}
+		<script id="{$template}" type="text/html">
+			{$template_content|replace:'</':'<\/'}
+		</script>
+		{capture name=$template}{/capture}
+	{/if}
+{/foreach}
+
+{/if}
+
+<script type="text/javascript">
+
+	$.order_list.buildLoadListUrl = function(id, lt, counters) {
+		var s = '?module=orders&action=loadList';
+		if ( $('#sort_order_date').closest('li').is('.selected') ){
+			var date = $('#sort_order_date_form input[name="date"]').val();
+			this.container.find('.order').each(function(){
+				var order_id = $(this).data('order-id');
+				id = (order_id > id) ? order_id : id;
+			});
+			date = (date!='') ? '&date='+date : '';
+			s = '?plugin=sod&module=loadList'+date;
+		}
+		return s+'&id=' + id +
+			(this.filter_params_str ? '&' + this.filter_params_str : '') +
+			(lt ? '&lt='+id : '') +
+			(counters ? '&counters=1' : '') +
+			(this.options.view ? '&view='+this.options.view : '');
+	}
+	
+	$.order_list.updateListItems = function(){
+		var self = this;
+		
+		this.container.off('click','.order a').on('click','.order a',function(e){
+			var order_id = $(this).closest('li').data('order-id');
+			self.loadOrder(order_id);
+			return false;
+		})
+	}
+	
+	$.order_list.init({
+		id: {if $view != 'table' && $order.id}{$order.id}{else}0{/if},
+		view: '{$view}',
+		filter_params: {json_encode($params)},
+		filter_params_str: '{$params_str}',
+		orders: {json_encode($orders)},
+		total_count: {$total_count},
+		count: {$count},
+		lazy_loading: {
+			auto: true
+		},
+		update_process: {
+			timeout: 86400000{*$timeout*}
+		},
+		title_suffix: '{' — '|cat:{$wa->accountName(false)}|escape:'javascript'}',
+		state_names: {json_encode($state_names)},
+		counters: {json_encode($counters)}
+	});
+
+</script>
+<style type="text/css">
+.delivery-date {
+font-size: 11px;
+{*color: #C20000;*}
+font-weight: bold;
+line-height: 18px;
+}
+span.sod-ok {
+font-size: 9px;
+color: rgb(182, 0, 0);
+}
+</style>

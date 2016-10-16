@@ -1,0 +1,26 @@
+<div action="{$wa_app_url}shop-sod-plugin-set-date/" id="sod-form">
+	<b>Укажите дату и время доставки</b><br>
+	<input type="text" name="date" id="datetimepicker" value="{$date}">
+	с <input type="text" name="start_hour" id="timepicker_start" value="{$start}">
+	до <input type="text" name="end_hour" id="timepicker_end" value="{$end}">
+</div>
+
+<script type="text/javascript">
+$(function() {
+	$.order_datetimepicker.init({
+		dtp : $( "#datetimepicker" ),
+		dtps : $('#timepicker_start'),
+		dtpe : $('#timepicker_end'),
+		max_date : '{date("Y/m/d",strtotime("+`$settings.frontend_day_forward` day"))}',
+		min_date : '{date("Y/m/d",strtotime("+`$settings.frontend_cancel_day_forward` day"))}',
+		year_start : '{date("Y")}',
+		year_end : '{date("Y",strtotime("+1 year"))}',
+		work_min_time : '{$settings.work_min_time}',
+		work_max_time : '{$settings.work_max_time+1}',
+		weekend_min_time : '{$settings.weekend_min_time}',
+		weekend_max_time : '{$settings.weekend_max_time}',
+		weekend : '{$settings.weekend}',
+		form : $('#sod-form')
+	});
+});
+</script>

@@ -1,0 +1,48 @@
+#sod-form {
+border: #EFEFEF solid 10px;
+clear: both;
+padding: 10px;
+margin: 10px 0;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+box-shadow: #CACACA 1px 1px 3px;
+display: inline-block;
+}
+#sod-form:hover {
+border-color: #E6E6E6;;
+}
+#sod-form  input{
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+border: silver solid 1px;
+padding: 3px;
+width: 80px;
+text-align: center;
+background-image: -webkit-gradient(
+	linear,
+	left top,
+	left bottom,
+	color-stop(0.11, #F5F5F5),
+	color-stop(0.56, #FFFFFF)
+);
+background-image: -o-linear-gradient(bottom, #F5F5F5 11%, #FFFFFF 56%);
+background-image: -moz-linear-gradient(bottom, #F5F5F5 11%, #FFFFFF 56%);
+background-image: -webkit-linear-gradient(bottom, #F5F5F5 11%, #FFFFFF 56%);
+background-image: -ms-linear-gradient(bottom, #F5F5F5 11%, #FFFFFF 56%);
+background-image: linear-gradient(to bottom, #F5F5F5 11%, #FFFFFF 56%);
+}
+#sod-form  input:focus{
+outline:none;
+}
+#sod-form b {
+margin: 0 0 6px 0;
+display: inline-block;
+font-size: 15px;
+color: #666;
+}
+#sod-form #timepicker_start,
+#sod-form #timepicker_end {
+width:43px;
+}

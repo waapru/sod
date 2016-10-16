@@ -1,0 +1,247 @@
+{$js}{$css}
+<h1>Настройка плагина "Дата доставки".</h1>
+
+<div id="desc-block">
+{literal}
+<p>Плагин предоставляет покупателю и менеджеру магазина удобный инструмент для назначения даты и диапазона времени доставки заказа. Данный плагин прежде всего полезен интернет-магазинам с курьерской доставкой, но не ограничен этим, так как работа плагина не зависят от типа доставки. Дата и время доставки хранятся в отдельной таблице базы данных и связана лишь с заказом.</p>
+<p>Плагин позволяет покупателю при оформлении заказа выбрать дату и время доставки. Менеджер магазина в свою очередь может изменить время доставки в административной части сайта. Имеется индикатор согласования времени и даты доставки с покупателем. В помощь менеджеру в разделе "Заказы" организован быстрый доступ к заказам с назначенной доставой по дате.</p>
+<p>Плагин имеет следующие настройки:</p>
+<ol>
+<li>Управление дизайном блока выбора времени и даты доставки на витрине. Поддержка нескольких тем дизайна;</li>
+<li>Включение/выключение плагина;</li>
+<li>Включение/выключение плагина на витрине;</li>
+<li>Включение/выключение вывода формы выбора времени и даты доставки покупателем при оформлении заказ. При отключенном выводе можно воспользоваться хелпером {shopSodPlugin::form()} для вывода формы выбора времени и даты в любом месте шаблона;</li>
+<li>Включение/выключение требования заполнить форму выбора времени и даты. Используется в js-script'е через переменну {$settings.necessary};</li>
+<li>Указание диапазона работы доставки в будни и выходные. В этих границах будет воможен выбор диапазона времени доставки;</li>
+<li>Указание диапазона доступных для выбора дней от текущего дня. В этих границах будет воможен выбор диапазона даты доставки. Отдельно указывается диапазон для витрины и административной части;</li>
+<li>Возможность выбора статусов заказов, при которых у заказов не отображается форма назначения времени и даты доставки менеджером;</li>
+</ol>
+<p>Указать в шаблоне выбранную дату доставки можно с помощью хелпера <b>{shopSodPlugin::dateTime($order_id,$html)}</b>, где $order_id - идентификатор заказа, $html - шаблон строки вывода даты, по умолчанию "Дата доставки заказа #date# с #start# до #end#", #date# - при выводе заменяется датой доставки, #start# - началом интервала времени доставки, #end# - концом интервала. Если требуется вывести выбранную дату и время до завершения оформления заказа, то укажите $order_id = 0.</p>
+<p>В уведомлениях дата/время доставки указывается с помощью хелпера <b>{shopSodPlugin::dateTimeN($order.id,$html)}</b>, где $order.id - строка номера заказа, $html - шаблон строки вывода даты и времени (см выше)</p>
+{/literal}
+</div>
+
+<div class="block block-frontend-disign">
+	<h4>
+		<i class="icon16 palette"></i>Дизайн плагина на витрине для темы 
+		<select name="theme" id="select-frontend-disign-theme">
+			<option value="_">Для всех тем</option>
+			{foreach $themes as $theme}
+			<option value="{$theme}">{$theme}</option>
+			{/foreach}
+		</select>
+	</h4>
+	<a href="#" class="inline-link" data-mode="text/css" data-name="css">css-стили</a>
+	<a href="#" class="inline-link" data-mode="text/javascript" data-name="js">js-скрипты</a>
+	<a href="#" class="inline-link" data-mode="text/html" data-name="checkout">блок "Выбор времени и даты доставки"</a>
+	<div>
+		<span class="hint">По умолчанию дизайн плагина на витрине один и тот же для всех витрин. Если требуется настоить индивидуальный дизайн для каждой витрины, выберите тему в выпадающем списке, кликните на нужный блок и внесите необходимые правки.</span>
+	</div>
+</div>
+
+<link href="{$wa_url}wa-content/js/farbtastic/farbtastic.css" rel="stylesheet" type="text/css">
+<script src="{$wa_url}wa-content/js/farbtastic/farbtastic.js" type="text/javascript"></script>
+
+<div class="fields form" id="sod-form">
+	<form action="?module=plugins&id=sod&action=save" method="post" id="plugins-settings-form">
+		{$wa->csrf()}
+		<div class="field-group">
+			{$standart_settings}
+		</div>
+		<div class="field-group">
+			<div class="field">
+				<div class="name">Часы работы в будни, час</div>
+				<div class="value">
+					с
+					<input type="text" id="datetimepicker_work_min_time" name="shop_sod[work_min_time]" value="{$settings.work_min_time}" class="short-inp">
+					по
+					<input type="text" id="datetimepicker_work_max_time" name="shop_sod[work_max_time]" value="{$settings.work_max_time}" class="short-inp">
+				</div>
+			</div>
+			<div class="field">
+				<div class="name">Часы работы в выходные, час</div>
+				<div class="value">
+					с
+					<input type="text" id="datetimepicker_weekend_min_time" name="shop_sod[weekend_min_time]" value="{$settings.weekend_min_time}" class="short-inp">
+					по
+					<input type="text" id="datetimepicker_weekend_max_time" name="shop_sod[weekend_max_time]" value="{$settings.weekend_max_time}" class="short-inp">
+				</div>
+			</div>
+		</div>
+		<div class="field-group">
+			<div class="field">
+				<div class="name">Выбор даты на N дней вперед на витрине</div>
+				<div class="value">
+					с
+					<input type="text" name="shop_sod[frontend_cancel_day_forward]" value="{$settings.frontend_cancel_day_forward}" class="short-inp">
+					по
+					<input type="text" name="shop_sod[frontend_day_forward]" value="{$settings.frontend_day_forward}" class="short-inp">
+				</div>
+			</div>
+			<div class="field">
+				<div class="name">Выбор даты на N дней вперед в заказах</div>
+				<div class="value">
+					с
+					<input type="text" name="shop_sod[backend_cancel_day_forward]" value="{$settings.backend_cancel_day_forward}" class="short-inp">
+					по
+					<input type="text" name="shop_sod[backend_day_forward]" value="{$settings.backend_day_forward}" class="short-inp">
+				</div>
+			</div>
+		</div>
+		<div class="field-group">
+			<div class="field">
+				<div class="name">Скрыть форму для заказов со статусом</div>
+				<div class="value">
+					{foreach $states as $id=>$state}
+					<span class="state{if in_array($id,$settings.disable_states)} checked-state{/if}" data-id="{$id}">{if in_array($id,$settings.disable_states)}<input type="hidden" name="shop_sod[disable_states][]" value="{$id}">{/if}{$state->getName()}</span>
+					{/foreach}
+				</div>
+			</div>
+		</div>
+		<hr>
+		<input type="submit" class="button green" value="Сохранить">
+		<span id="plugins-settings-form-status" style="display:none">
+			<i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
+		</span>
+	</form>
+</div>
+
+<style>
+.colorreplacer {
+background: #123456;
+display: inline-block;
+width: 16px;
+height: 16px;
+position: relative;
+top: 5px;
+left: 5px;
+}
+#sod-form {
+width:100%;
+}
+.field .value input[type="text"].short-inp {
+padding: 2px 10px;
+min-width: 16px;
+width: 15px;
+text-align: center;
+}
+#sod-form .field .name {
+width:300px;
+}
+
+#sod-form .field .value {
+margin-left:330px;
+}
+
+#sod-form span.state {
+padding: 3px 6px;
+line-height: 16px;
+display: inline-block;
+margin: 2px 0px;
+cursor:pointer;
+}
+
+#sod-form span.checked-state {
+background: rgb(255, 187, 61);
+}
+</style>
+
+<script type="text/javascript">
+$(function(){
+	
+	$('#desc-block').waapplugindesc();
+	$('.block-frontend-disign').waapplugindisign({ plugin_id:'sod' });
+	
+	function checkHours(min,max){
+		min = parseInt(min);
+		max = parseInt(max);
+		console.log(min+'-'+max);
+		min = (isNaN(min))?9:min;
+		max = (isNaN(max))?18:max;
+		
+		max = (max<1)?1:max;
+		max = (max>24)?24:max;
+		
+		min = (min<0)?0:min;
+		min = (min>23)?23:min;
+		min = (min>=max)?max-1:min;
+		
+		return [min,max];
+	}
+	
+	
+	function initChange(a,b){
+		$(a+', '+b).change(function(){
+			var min = $(a).val(),
+				max = $(b).val();
+				m = checkHours(min,max);
+			console.log(m);
+			$(a).val(m[0]);
+			$(b).val(m[1]);
+		})
+	}
+	
+	initChange('#datetimepicker_work_min_time','#datetimepicker_work_max_time');
+	initChange('#datetimepicker_weekend_min_time','#datetimepicker_weekend_max_time');
+	
+	
+	/*$('#datetimepicker_work_min_time').datetimepicker({
+		datepicker:false,
+		format:'H',
+		formatTime:'H',
+		onShow:function( ct ){
+			this.setOptions({
+				maxTime:$('#datetimepicker_work_max_time').val()?$('#datetimepicker_work_max_time').val():false
+			})
+		},
+	})
+	$('#datetimepicker_work_max_time').datetimepicker({
+		datepicker:false,
+		format:'H',
+		formatTime:'H',
+		onShow:function( ct ){
+			this.setOptions({
+				minTime:$('#datetimepicker_work_min_time').val()?$('#datetimepicker_work_min_time').val():false
+			})
+		},
+	})
+	
+	$('#datetimepicker_weekend_min_time').datetimepicker({
+		datepicker:false,
+		format:'H',
+		formatTime:'H',
+		onShow:function( ct ){
+			this.setOptions({
+				maxTime:$('#datetimepicker_weekend_max_time').val()?$('#datetimepicker_weekend_max_time').val():false
+			})
+		},
+		onSelectTime:function(){
+			$('.xdsoft_datetimepicker').remove();
+		}
+	})
+	$('#datetimepicker_weekend_max_time').datetimepicker({
+		datepicker:false,
+		format:'H',
+		formatTime:'H',
+		onShow:function( ct ){
+			this.setOptions({
+				minTime:$('#datetimepicker_weekend_min_time').val()?$('#datetimepicker_weekend_min_time').val():false
+			})
+		},
+		onSelectTime:function(){
+			$('.xdsoft_datetimepicker').remove();
+		}
+	})*/
+	
+	$('span.state').click(function(){
+		var s = $(this),
+			id = s.data('id');
+		if ( s.is('.checked-state') ){
+			$('input',s).remove();
+			s.removeClass('checked-state');
+		}else{
+			s.prepend('<input type="hidden" name="shop_sod[disable_states][]" value="'+id+'">').addClass('checked-state');
+		}
+	})
+})
+</script>

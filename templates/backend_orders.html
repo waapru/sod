@@ -1,0 +1,118 @@
+<li>
+	<form id="sort_order_date_form">
+		<i id="calendar"><input type="text" name="date" id="calendar-input"></i>
+	</form>
+	<form action="?plugin=sod&module=dates" id="s-sod-date-list-form"></form>
+	<a href="#" id="sort_order_date"><i class="icon16 clock"></i>С доставкой</a>
+</li>
+<link href="{$wa_url}wa-apps/shop/plugins/sod/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" type="text/css"/>
+<script src="{$wa_url}wa-apps/shop/plugins/sod/js/datetimepicker/jquery.datetimepicker.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+$.sod_order_list = {
+	link : $('#sort_order_date'),
+	form : $('#sort_order_date_form'),
+	calendar : $('#calendar'),
+	calendar_input : $('#calendar-input'),
+	dates_form : $('#s-sod-date-list-form'),
+	
+	init : function(){
+		var self = this;
+		this.link.click(function(){
+			//$('input',self.form).val('');
+			//self.load();
+			self.loadDateList();
+		});
+		this.calendar_input.datetimepicker({
+			lang : 'ru',
+			mask : '39.19.2999',
+			format : 'Y-m-d',
+			timepicker : false,
+			//minDate : '0',
+			//maxDate : this.max_date,
+			//yearStart : this.year_start,
+			//yearEnd : this.year_end,
+			onSelectDate : function(){
+				self.load();
+			}
+		});
+		this.calendar.click(function(){
+			self.calendar_input.datetimepicker('show');
+		});
+		
+		$('#s-content').off('click','#date-list a').on('click','#date-list a',function(){
+			self.calendar_input.val($(this).data('date'));
+			self.load();
+			return false;
+		});
+		
+	},
+	
+	load : function(){
+		var self = this,
+			li = self.link.closest('li');
+		$('i',self.link).removeClass('clock').addClass('loading');
+		$.post('?plugin=sod&module=orders',this.form.serializeArray(),function(response){
+			$('#s-content').html('').append(response);
+			li.closest('ul').find('.selected').removeClass('selected');
+			li.addClass('selected');
+			$('i',self.link).removeClass('loading').addClass('clock');
+		});
+		return false;
+	},
+	
+	loadDateList : function(){
+		var self = this,
+			li = this.link.closest('li'),
+			f = this.dates_form;
+		this.loadingOn();
+		$.post(f.attr('action'),f.serializeArray(),function(response){
+			$('#s-content').html('').append(response);
+			li.closest('ul').find('.selected').removeClass('selected');
+			li.addClass('selected');
+			self.loadingOff();
+		});
+		return false;
+	},
+	
+	loadingOn : function(){
+		$('i',this.link).removeClass('clock').addClass('loading');
+	},
+	
+	loadingOff : function(){
+		$('i',this.link).removeClass('loading').addClass('clock');
+	}
+};
+
+$(function(){
+	$.sod_order_list.init();
+})
+</script>
+<style type="text/css">
+.calendar-icon,
+#calendar {
+float:right;
+display:block;
+cursor;pointer;
+width:16px;
+height:16px;
+background:transparent url("data:image/ТИП;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqckz1PVEEUht/5uoQlhF1ihUYLg9C7Go0Fi7aYqIVW/gJbfoEJP4CCxJ6CRAoLEo0YwqIQYSXBhY2yLN1amoBEs5e7c+d4Zu4W8hGCnGTyzMw575l37s2ItZlxur03DUDyEDhfEA+HSuE5BL0aIDyY4j33fw0EH7jwAhqK1z83gPob3jxnA5cCQ08QtM9mm/SHiOaWq9Rgvl3dol3mu1Po83Mrm7RliX7x/OnrJmmV7COHK5jd6UFrYxtKRqD1Ops5ScdMrMHkHaCbD1eHe5CJbQdXuchh7NEwjLAYezyE6Bg1WTz0FA6Nj+XgPkkt5KG1oYFWApXyDgp9BpXFBvL/stxAf7/BGq8LeYNiqRT+WewbxNaFBkoDI6M3YFOH0v3BoxwdRBynYZ20HWqfV4Im5jk7cB0Hkn8JYIwM9o5TaxHynsW794Im4eYyTtOsgRHgWkRdkr/DSZpIZXlmbf1L5oC1Mm5nDRQ78AW+UJ9KGaiZN4u3gqbFWtlKsyv47PJmE6pLH6HuMNcb4VP1B3p6DWrVr5kDf/1rEx/Ix+73bxm3z2a9U+fjKmtxeWKeLhpeq0XrYOnSy/cjbccPhKjzoM4iwpsxUqA7+b3kd6/zyONisf9XgAEAP15Xfsg0XqMAAAAASUVORK5CYII=") center center no-repeat;
+}
+.calendar-icon {
+position: relative;
+top: -15px;
+cursor:pointer;
+}
+#calendar-input {
+margin:0;
+padding:0;
+width:0;
+height:0;
+border:none;
+line-height:0;
+position:absolute;
+}
+#sort_order_date_form {
+float:right;
+}
+</style>
