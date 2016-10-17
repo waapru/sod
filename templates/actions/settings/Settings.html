@@ -1,5 +1,21 @@
-{$js}{$css}
-<h1>Настройка плагина "Дата доставки".</h1>
+<script src="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.js"></script>
+<link rel="stylesheet" href="{$wa_url}wa-content/js/jquery-plugins/ibutton/jquery.ibutton.min.css" type="text/css"/>
+
+<script src="{$wa_url}wa-apps/shop/plugins/sod/js/datetimepicker/jquery.datetimepicker.js?{$v}"></script>
+<link rel="stylesheet" href="{$wa_url}wa-apps/shop/plugins/sod/js/datetimepicker/jquery.datetimepicker.css?{$v}">
+
+<script src="{$wa_url}wa-apps/shop/plugins/sod/js/plugin.js?{$v}"></script>
+<link rel="stylesheet" href="{$wa_url}wa-apps/shop/plugins/sod/css/plugin.css?{$v}">
+
+<link href="{$wa_url}wa-content/js/farbtastic/farbtastic.css" rel="stylesheet" type="text/css">
+<script src="{$wa_url}wa-content/js/farbtastic/farbtastic.js" type="text/javascript"></script>
+
+<h1>
+	Настройка плагина
+	<a href="mailto:waapru@gmail.com" title="waapru@gmail.com"><i class="icon16 status-green"></i>Поддержка</a>
+</h1>
+
+<div class="sod-plugin-settins">
 
 <div id="desc-block">
 {literal}
@@ -21,14 +37,15 @@
 {/literal}
 </div>
 
-<div class="block block-frontend-disign">
+<div class="block block-frontend-design">
 	<h4>
 		<i class="icon16 palette"></i>Дизайн плагина на витрине для темы 
-		<select name="theme" id="select-frontend-disign-theme">
+		<select name="theme" id="select-frontend-design-theme">
 			<option value="_">Для всех тем</option>
 			{foreach $themes as $theme}
 			<option value="{$theme}">{$theme}</option>
 			{/foreach}
+			<option value="_default_">- исходный файл -</option>
 		</select>
 	</h4>
 	<a href="#" class="inline-link" data-mode="text/css" data-name="css">css-стили</a>
@@ -39,32 +56,29 @@
 	</div>
 </div>
 
-<link href="{$wa_url}wa-content/js/farbtastic/farbtastic.css" rel="stylesheet" type="text/css">
-<script src="{$wa_url}wa-content/js/farbtastic/farbtastic.js" type="text/javascript"></script>
 
-<div class="fields form" id="sod-form">
 	<form action="?module=plugins&id=sod&action=save" method="post" id="plugins-settings-form">
 		{$wa->csrf()}
 		<div class="field-group">
-			{$standart_settings}
+			{$settings.standart}
 		</div>
 		<div class="field-group">
 			<div class="field">
 				<div class="name">Часы работы в будни, час</div>
 				<div class="value">
 					с
-					<input type="text" id="datetimepicker_work_min_time" name="shop_sod[work_min_time]" value="{$settings.work_min_time}" class="short-inp">
+					<input type="text" id="datetimepicker_work_min_time" name="shop_sod[work_min_time]" value="{$settings.values.work_min_time}" class="short-inp">
 					по
-					<input type="text" id="datetimepicker_work_max_time" name="shop_sod[work_max_time]" value="{$settings.work_max_time}" class="short-inp">
+					<input type="text" id="datetimepicker_work_max_time" name="shop_sod[work_max_time]" value="{$settings.values.work_max_time}" class="short-inp">
 				</div>
 			</div>
 			<div class="field">
 				<div class="name">Часы работы в выходные, час</div>
 				<div class="value">
 					с
-					<input type="text" id="datetimepicker_weekend_min_time" name="shop_sod[weekend_min_time]" value="{$settings.weekend_min_time}" class="short-inp">
+					<input type="text" id="datetimepicker_weekend_min_time" name="shop_sod[weekend_min_time]" value="{$settings.values.weekend_min_time}" class="short-inp">
 					по
-					<input type="text" id="datetimepicker_weekend_max_time" name="shop_sod[weekend_max_time]" value="{$settings.weekend_max_time}" class="short-inp">
+					<input type="text" id="datetimepicker_weekend_max_time" name="shop_sod[weekend_max_time]" value="{$settings.values.weekend_max_time}" class="short-inp">
 				</div>
 			</div>
 		</div>
@@ -73,18 +87,18 @@
 				<div class="name">Выбор даты на N дней вперед на витрине</div>
 				<div class="value">
 					с
-					<input type="text" name="shop_sod[frontend_cancel_day_forward]" value="{$settings.frontend_cancel_day_forward}" class="short-inp">
+					<input type="text" name="shop_sod[frontend_cancel_day_forward]" value="{$settings.values.frontend_cancel_day_forward}" class="short-inp">
 					по
-					<input type="text" name="shop_sod[frontend_day_forward]" value="{$settings.frontend_day_forward}" class="short-inp">
+					<input type="text" name="shop_sod[frontend_day_forward]" value="{$settings.values.frontend_day_forward}" class="short-inp">
 				</div>
 			</div>
 			<div class="field">
 				<div class="name">Выбор даты на N дней вперед в заказах</div>
 				<div class="value">
 					с
-					<input type="text" name="shop_sod[backend_cancel_day_forward]" value="{$settings.backend_cancel_day_forward}" class="short-inp">
+					<input type="text" name="shop_sod[backend_cancel_day_forward]" value="{$settings.values.backend_cancel_day_forward}" class="short-inp">
 					по
-					<input type="text" name="shop_sod[backend_day_forward]" value="{$settings.backend_day_forward}" class="short-inp">
+					<input type="text" name="shop_sod[backend_day_forward]" value="{$settings.values.backend_day_forward}" class="short-inp">
 				</div>
 			</div>
 		</div>
@@ -93,155 +107,22 @@
 				<div class="name">Скрыть форму для заказов со статусом</div>
 				<div class="value">
 					{foreach $states as $id=>$state}
-					<span class="state{if in_array($id,$settings.disable_states)} checked-state{/if}" data-id="{$id}">{if in_array($id,$settings.disable_states)}<input type="hidden" name="shop_sod[disable_states][]" value="{$id}">{/if}{$state->getName()}</span>
+					<span class="state{if in_array($id,$settings.values.disable_states)} checked-state{/if}" data-id="{$id}">{if in_array($id,$settings.values.disable_states)}<input type="hidden" name="shop_sod[disable_states][]" value="{$id}">{/if}{$state->getName()}</span>
 					{/foreach}
 				</div>
 			</div>
 		</div>
 		<hr>
-		<input type="submit" class="button green" value="Сохранить">
+		<input type="submit" class="button green" value="Сохранить" id="plugin-submit-btn" data-plugin-id="sod">
 		<span id="plugins-settings-form-status" style="display:none">
 			<i style="vertical-align:middle" class="icon16 yes"></i> [`Saved`]
 		</span>
 	</form>
+
+
 </div>
 
-<style>
-.colorreplacer {
-background: #123456;
-display: inline-block;
-width: 16px;
-height: 16px;
-position: relative;
-top: 5px;
-left: 5px;
-}
-#sod-form {
-width:100%;
-}
-.field .value input[type="text"].short-inp {
-padding: 2px 10px;
-min-width: 16px;
-width: 15px;
-text-align: center;
-}
-#sod-form .field .name {
-width:300px;
-}
-
-#sod-form .field .value {
-margin-left:330px;
-}
-
-#sod-form span.state {
-padding: 3px 6px;
-line-height: 16px;
-display: inline-block;
-margin: 2px 0px;
-cursor:pointer;
-}
-
-#sod-form span.checked-state {
-background: rgb(255, 187, 61);
-}
-</style>
-
 <script type="text/javascript">
-$(function(){
-	
-	$('#desc-block').waapplugindesc();
-	$('.block-frontend-disign').waapplugindisign({ plugin_id:'sod' });
-	
-	function checkHours(min,max){
-		min = parseInt(min);
-		max = parseInt(max);
-		console.log(min+'-'+max);
-		min = (isNaN(min))?9:min;
-		max = (isNaN(max))?18:max;
-		
-		max = (max<1)?1:max;
-		max = (max>24)?24:max;
-		
-		min = (min<0)?0:min;
-		min = (min>23)?23:min;
-		min = (min>=max)?max-1:min;
-		
-		return [min,max];
-	}
-	
-	
-	function initChange(a,b){
-		$(a+', '+b).change(function(){
-			var min = $(a).val(),
-				max = $(b).val();
-				m = checkHours(min,max);
-			console.log(m);
-			$(a).val(m[0]);
-			$(b).val(m[1]);
-		})
-	}
-	
-	initChange('#datetimepicker_work_min_time','#datetimepicker_work_max_time');
-	initChange('#datetimepicker_weekend_min_time','#datetimepicker_weekend_max_time');
-	
-	
-	/*$('#datetimepicker_work_min_time').datetimepicker({
-		datepicker:false,
-		format:'H',
-		formatTime:'H',
-		onShow:function( ct ){
-			this.setOptions({
-				maxTime:$('#datetimepicker_work_max_time').val()?$('#datetimepicker_work_max_time').val():false
-			})
-		},
-	})
-	$('#datetimepicker_work_max_time').datetimepicker({
-		datepicker:false,
-		format:'H',
-		formatTime:'H',
-		onShow:function( ct ){
-			this.setOptions({
-				minTime:$('#datetimepicker_work_min_time').val()?$('#datetimepicker_work_min_time').val():false
-			})
-		},
-	})
-	
-	$('#datetimepicker_weekend_min_time').datetimepicker({
-		datepicker:false,
-		format:'H',
-		formatTime:'H',
-		onShow:function( ct ){
-			this.setOptions({
-				maxTime:$('#datetimepicker_weekend_max_time').val()?$('#datetimepicker_weekend_max_time').val():false
-			})
-		},
-		onSelectTime:function(){
-			$('.xdsoft_datetimepicker').remove();
-		}
-	})
-	$('#datetimepicker_weekend_max_time').datetimepicker({
-		datepicker:false,
-		format:'H',
-		formatTime:'H',
-		onShow:function( ct ){
-			this.setOptions({
-				minTime:$('#datetimepicker_weekend_min_time').val()?$('#datetimepicker_weekend_min_time').val():false
-			})
-		},
-		onSelectTime:function(){
-			$('.xdsoft_datetimepicker').remove();
-		}
-	})*/
-	
-	$('span.state').click(function(){
-		var s = $(this),
-			id = s.data('id');
-		if ( s.is('.checked-state') ){
-			$('input',s).remove();
-			s.removeClass('checked-state');
-		}else{
-			s.prepend('<input type="hidden" name="shop_sod[disable_states][]" value="'+id+'">').addClass('checked-state');
-		}
-	})
-})
+var wa_url = '{$wa_url}';
+$.shop.sodPlugin.init();
 </script>
