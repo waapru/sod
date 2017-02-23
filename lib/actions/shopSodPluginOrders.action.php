@@ -16,7 +16,8 @@ class shopSodPluginOrdersAction extends shopOrderListAction
 
 		$date = waRequest::post('date');
 		
-		$orders = $this->getOrders(0, $this->getCount(),$date);
+		// $orders = $this->getOrders(0, $this->getCount(),$date);
+		$orders = $this->getOrders(0, 1000,$date);
 		
 		$action_ids = array_flip(array('process', 'pay', 'ship', 'complete', 'delete', 'restore'));
 		$workflow = new shopWorkflow();
