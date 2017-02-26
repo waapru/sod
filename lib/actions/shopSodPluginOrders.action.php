@@ -15,8 +15,9 @@ class shopSodPluginOrdersAction extends shopOrderListAction
 		$view = waRequest::get('view', $default_view, waRequest::TYPE_STRING_TRIM);
 
 		$date = waRequest::post('date');
-		
-		$orders = $this->getOrders(0, 1,$date);
+        $date = date('Y-m-d', strtotime($date));
+
+		$orders = $this->getOrders(0,$this->getCount($date),$date);
 		
 		$action_ids = array_flip(array('process', 'pay', 'ship', 'complete', 'delete', 'restore'));
 		$workflow = new shopWorkflow();
@@ -96,4 +97,10 @@ class shopSodPluginOrdersAction extends shopOrderListAction
 		}
 		return $this->orders;
 	}
+
+    public function getCount($date = null)
+    {
+        $m = new shopSodPluginDateModel;
+        return $m->countByField('date',$date);
+    }
 }
