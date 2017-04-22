@@ -1,6 +1,6 @@
 $(function() {
         function saveDate(d,b,e){
-            $.post($('#sod-form').attr('action'),{
+            $.post('/shop-sod-plugin-set-date/',{
                 'date' : d,
                 'start_hour' : b,
                 'end_hour' : e
@@ -37,6 +37,7 @@ $(function() {
                 ( c == s ) ? $('.shipping-'+c+', .shipping-'+c+' .wa-address').show() : $('.shipping-'+c).hide();
             })
             $('.shipping-'+s).find('[name="shipping_id"]').attr('checked',true).prop('checked',true);
+			saveDate($('#datetimepicker').val(),$('#sod-form .interval.selected').data('start'),$('#sod-form .interval.selected').data('end'));
         }
 		function hide(){
 			t = true;
@@ -75,7 +76,7 @@ $(function() {
 				min_date.setDate(today.getDate()+2);
 		}
 
-		max_date.setDate(min_date.getDate()+10);
+		max_date.setDate(min_date.getDate()+3);
 		
         //today.setDate(today.getDate());
         today.getDay() == 0 && today.setDate(today.getDate()+1);
