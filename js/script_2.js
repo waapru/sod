@@ -62,7 +62,7 @@ $(function() {
             $(this).addClass('selected');
             switchShipping();
         })
-        switchShipping();
+        
         var today = new Date(),
 			min_date = new Date(),
 			max_date = new Date();
@@ -107,4 +107,5 @@ $(function() {
             }
         };
         $('#datetimepicker').datetimepicker(options);
+		switchShipping();
     });
