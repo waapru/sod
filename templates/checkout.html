@@ -1,9 +1,11 @@
 <div action="{$wa_app_url}shop-sod-plugin-set-date/" id="sod-form">
-    <b>Укажите дату и время доставки</b><br>
-    <input type="text" name="date" id="datetimepicker" value="{$date}">
-    с <input type="text" name="start_hour" id="timepicker_start" value="{$start}">
-    до <input type="text" name="end_hour" id="timepicker_end" value="{$end}">
+	<b>Укажите дату и время доставки</b><br>
+	<input type="text" name="date" id="datetimepicker" value="{$date}">
+	с <input type="text" name="start_hour" id="timepicker_start" value="{$start}">
+	до <input type="text" name="end_hour" id="timepicker_end" value="{$end}">
 </div>
+
+<script type="text/javascript">
 $(function() {
 	$.order_datetimepicker.init({
 		dtp : $( "#datetimepicker" ),

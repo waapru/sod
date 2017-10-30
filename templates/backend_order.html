@@ -1,31 +1,26 @@
 <form action="?plugin=sod&module=setDate" method="post" id="sod-backend-order-form">
 	<input type="hidden" name="order_id" value="{$order_id}">
 	<b>Дата и время доставки</b><br>
-	{if $delivary_date.user_date}
-    Указано покупателем: {$delivary_date.user_date}
+	{if $settings.frontend}
+	Указано покупателем: {if $delivary_date.user_date != '30.11.-0001'}{$delivary_date.user_date}
 	{if $delivary_date.user_start_hour}с {$delivary_date.user_start_hour}{/if}
-	{if $delivary_date.user_end_hour}до {$delivary_date.user_end_hour}{/if}
-    {else}
-    Покупатель не указал время доставки
+	{if $delivary_date.user_end_hour}до {$delivary_date.user_end_hour}{/if}{/if}
+	<br>
 	{/if}
-    <br>
-	Указано менеджером: <span id="sod-m-date" data-show="1">{$delivary_date.date} {if $delivary_date.date}с {$delivary_date.start_hour}{/if} {if $delivary_date.end_hour}до {$delivary_date.end_hour}{/if}</span>
+	Указано менеджером: <span id="sod-m-date">{$delivary_date.date} {if $delivary_date.date}с {$delivary_date.start_hour}{/if} {if $delivary_date.end_hour}до {$delivary_date.end_hour}{/if}</span>
 	<span id="sod-m-date-edit" style="display:none;">
 	<input type="text" name="date" id="datetimepicker" value="{$delivary_date.date}">
 	с <input type="text" name="start_hour" id="timepicker_start" value="{$delivary_date.start_hour}">
 	до <input type="text" name="end_hour" id="timepicker_end" value="{$delivary_date.end_hour}">
 	</span>
-	<a href="#" id="sod-edit-date"><i class="icon16 edit"></i></a>	<br>
+	<a id="sod-edit-date"><i class="icon16 edit"></i></a
+>	<br>
 	<input type="checkbox" name="ok"{if $delivary_date.ok} checked="checked"{/if}> согласовано с покупателем
 </form>
 
+<script type="text/javascript" src="{$wa_app_static_url}plugins/sod/js/order/datetimepicker.js?v{$wa->version()}"></script>
 <script type="text/javascript">
 $(function() {
-    var form = $('#sod-backend-order-form');
-
-    $.order_datetimepicker.saveDate = function(){
-        $.post(this.form.attr('action'),this.form.serializeArray());
-    };
 	$.order_datetimepicker.init({
 		dtp : $( "#datetimepicker" ),
 		dtps : $('#timepicker_start'),
@@ -39,31 +34,69 @@ $(function() {
 		work_max_time : '{$settings.work_max_time+1}',
 		weekend_min_time : '{$settings.weekend_min_time}',
 		weekend_max_time : '{$settings.weekend_max_time+1}',
-		weekend : '{$settings.weekend}',
-        form : form
+		weekend : '{$settings.weekend}'
 	});
 	
 	$('#sod-edit-date').click(function(){
-	    var md = $('#sod-m-date');
-		if ( md.data('show') == 1 ){
-            md.hide();
-            md.data('show',0);
+		if ($('#sod-m-date').is(':visible') || ($('#sod-m-date').text().trim() == '' && !$('#sod-m-date-edit').is(':visible')) ){
+			$('#sod-m-date').hide();
 			$('#sod-m-date-edit').show();
-		}else{
-            var date = $('#datetimepicker').val(),
-                start = $('#timepicker_start').val(),
-                end = $('#timepicker_end').val(),
-                s = ( date != '__.__.____' ) ? date : '';
-            s += ( start != '' ) ? ' с '+start : '';
-            s += ( end != '' ) ? ' до '+end : '';
-            md.text(s).show();
-            md.data('show',1);
-            $('#sod-m-date-edit').hide();
-        }
-        return false;
+		}else
+			if ($('#sod-m-date-edit').is(':visible')){
+				var date = $('#datetimepicker').val(),
+					start = $('#timepicker_start').val(),
+					end = $('#timepicker_end').val(),
+					s = ( date != '__.__.____' ) ? date : '';
+				s += ( start != '' ) ? ' с '+start : '';
+				s += ( end != '' ) ? ' до '+end : '';
+				$('#sod-m-date').text(s).show();
+				$('#sod-m-date-edit').hide();
+			}
 	})
-    $('#sod-backend-order-form [name="ok"]').click(function(){
-        $.post(form.attr('action'),form.serializeArray());
-    })
 });
 </script>
+
+<style type="text/css">
+#sod-backend-order-form {
+margin: 0 0 20px;
+line-height: 21px;
+display: inline-block;
+}
+#sod-backend-order-form input[type="checkbox"] {
+position:relative;
+top:3px;
+}
+#datetimepicker:focus {
+outline:none;
+}
+#datetimepicker,
+#timepicker_start,
+#timepicker_end{
+padding: 2px 10px;
+width: 72px;
+color: sienna;
+}
+#timepicker_start,
+#timepicker_end{
+width:15px;
+text-align:center;
+}
+.datetimepicker-li {
+list-style:none;
+margin-bottom:20px;
+line-height:24px;
+}
+.datetimepicker-li input[type="checkbox"]{
+position:relative;
+top:3px;
+}
+.datetimepicker-li b i.loading {
+position:relative;
+top:5px;
+left:10px;
+}
+span.datetimepicker-error {
+padding-left: 10px;
+color: #c20000;
+}
+</style>

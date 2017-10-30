@@ -25,30 +25,18 @@ class shopSodPlugin extends shopPlugin
 	{
 		$html = '';
 		$state = $params['state']->getId();
-		$settings = $this->getSettings();
-		if ( $settings['on'] && !in_array($state,$this->getSettings('disable_states')) )
+		if ( $this->getSettings('on') && !in_array($state,$this->getSettings('disable_states')) )
 		{
-            $order_id = $params['id'];
-            $m = new shopSodPluginDateModel;
-
-			if ( $delivary_date = $m->getByField('order_id',$order_id) ){
-                foreach ( array('date','user_date') as $k )
-                    $delivary_date[$k] = date('d.m.Y', strtotime($delivary_date[$k]));
-            } else {
-                $weekend = date('N') > 5;
-                $delivary_date = array(
-                    'date' => date('d.m.Y',strtotime("+{$settings['backend_cancel_day_forward']} day")),
-                    'start_hour' => $weekend ? $settings['weekend_min_time'] : $settings['work_min_time'],
-                    'end_hour' => $weekend ? $settings['weekend_max_time'] : $settings['work_max_time'],
-                    'user_date' => false,
-                    'user_start_hour' => false,
-                    'user_end_hour' => false,
-                    'ok' => 0,
-                );
-            }
-
-            $view = wa()->getView();
-            $view->assign(compact('settings','order_id','delivary_date'));
+			$view = wa()->getView();
+			$view->assign('settings',$this->getSettings());
+			$view->assign('order_id',$params['id']);
+			$model = new shopSodPluginDateModel;
+			
+			if ( $delivary_date = $model->getByField('order_id',$params['id']) )
+				foreach ( array('date','user_date') as $k )
+					$delivary_date[$k] = date('d.m.Y', strtotime($delivary_date[$k]));
+			
+			$view->assign('delivary_date',$delivary_date);
 			$html = $view->fetch($this->path.'/templates/backend_order.html');
 		}
 		return array(
@@ -90,10 +78,9 @@ class shopSodPlugin extends shopPlugin
 		$order_id = $data['order_id'];
 
 		$cart = new shopCart;
-		$code = $cart->getCode();
 		$model = new shopSodPluginDateModel;
 
-		if ( $row = $model->getByField('code',$code) )
+		if ( ($code = $cart->getCode()) && ($row = $model->getByField('code',$code)) )
 		{
 			$id = $row['id'];
 			$model->updateById($id,array('order_id'=>$order_id,'code'=>'_'));
@@ -222,5 +209,4 @@ class shopSodPlugin extends shopPlugin
 		$workflow = new shopWorkflow();
 		return $workflow->getAllStates();
 	}
-
 }
